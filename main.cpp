@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 #include "Graph.h"
 #include "Dijkstra.h"
@@ -23,6 +24,10 @@ void printRoute(const Route& route)
     std::cout << "Total Travel Time: "
               << route.totalTravelTime
               << "\n";
+
+    std::cout << "Nodes Explored: "
+              << route.nodesExplored
+              << "\n";
 }
 
 int main()
@@ -35,20 +40,18 @@ int main()
     graph.addNode(4, 0, 0);
 
     graph.addEdge(1, 2, 4, 4);
-
     graph.addEdge(1, 3, 1, 1);
-
     graph.addEdge(3, 2, 2, 2);
-
     graph.addEdge(2, 4, 1, 1);
-
     graph.addEdge(3, 4, 5, 5);
 
     Dijkstra dijkstra(graph);
-
     AStar astar(graph);
 
-    std::cout << "===== Dijkstra =====\n";
+    std::cout << "========== Dijkstra ==========\n";
+
+    auto dijkstraStart =
+        std::chrono::high_resolution_clock::now();
 
     Route dijkstraRoute =
         dijkstra.shortestPath(
@@ -57,11 +60,24 @@ int main()
             DISTANCE
         );
 
+    auto dijkstraEnd =
+        std::chrono::high_resolution_clock::now();
+
+    double dijkstraTime =
+        std::chrono::duration<double, std::milli>(
+            dijkstraEnd - dijkstraStart
+        ).count();
+
     printRoute(dijkstraRoute);
 
-    std::cout << "\n";
+    std::cout << "Runtime (ms): "
+              << dijkstraTime
+              << "\n\n";
 
-    std::cout << "===== A* =====\n";
+    std::cout << "========== A* ==========\n";
+
+    auto astarStart =
+        std::chrono::high_resolution_clock::now();
 
     Route astarRoute =
         astar.shortestPath(
@@ -70,7 +86,19 @@ int main()
             DISTANCE
         );
 
+    auto astarEnd =
+        std::chrono::high_resolution_clock::now();
+
+    double astarTime =
+        std::chrono::duration<double, std::milli>(
+            astarEnd - astarStart
+        ).count();
+
     printRoute(astarRoute);
+
+    std::cout << "Runtime (ms): "
+              << astarTime
+              << "\n";
 
     return 0;
 }

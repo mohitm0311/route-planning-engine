@@ -33,8 +33,8 @@ Route Dijkstra::shortestPath(
     > pq;
     pq.push({0.0, source});
     const auto& adjList = graph.getAdjList();
-    while(!pq.empty())
-    {
+    while(!pq.empty()){
+        route.nodesExplored++;
         State current = pq.top();
         pq.pop();
         double currentDistance = current.first;

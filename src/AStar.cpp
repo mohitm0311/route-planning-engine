@@ -65,8 +65,8 @@ Route AStar::shortestPath(
 
     pq.push({startPriority,source});
     const auto& adjList =graph.getAdjList();
-    while(!pq.empty())
-    {
+    while(!pq.empty()){
+        route.nodesExplored++;
         State current = pq.top();
         pq.pop();
         long long currentNode =current.second;
