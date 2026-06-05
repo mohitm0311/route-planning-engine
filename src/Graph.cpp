@@ -35,3 +35,12 @@ const Edge* Graph::getEdge(long long from,long long to) const
     }
     return nullptr;
 }
+const Node* Graph::getNode(long long id) const
+{
+    auto it = nodes.find(id);
+    if(it == nodes.end())
+    {
+        return nullptr;
+    }
+    return &(it->second);
+}

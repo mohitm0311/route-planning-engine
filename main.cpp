@@ -2,7 +2,28 @@
 
 #include "Graph.h"
 #include "Dijkstra.h"
+#include "AStar.h"
 #include "RouteMode.h"
+
+void printRoute(const Route& route)
+{
+    std::cout << "Path: ";
+
+    for(long long node : route.path)
+    {
+        std::cout << node << " ";
+    }
+
+    std::cout << "\n";
+
+    std::cout << "Total Distance: "
+              << route.totalDistance
+              << "\n";
+
+    std::cout << "Total Travel Time: "
+              << route.totalTravelTime
+              << "\n";
+}
 
 int main()
 {
@@ -25,25 +46,31 @@ int main()
 
     Dijkstra dijkstra(graph);
 
-    Route route =
+    AStar astar(graph);
+
+    std::cout << "===== Dijkstra =====\n";
+
+    Route dijkstraRoute =
         dijkstra.shortestPath(
             1,
             4,
             DISTANCE
         );
 
-    std::cout << "Shortest Path: ";
-
-    for(long long node : route.path)
-    {
-        std::cout << node << " ";
-    }
+    printRoute(dijkstraRoute);
 
     std::cout << "\n";
 
-    std::cout << "Total Distance: "
-              << route.totalDistance
-              << "\n";
+    std::cout << "===== A* =====\n";
+
+    Route astarRoute =
+        astar.shortestPath(
+            1,
+            4,
+            DISTANCE
+        );
+
+    printRoute(astarRoute);
 
     return 0;
 }

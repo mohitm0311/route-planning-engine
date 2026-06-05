@@ -22,6 +22,8 @@ public:
     const std::unordered_map<long long, std::vector<Edge>>& getAdjList() const;
 
     const Edge* getEdge(long long from,long long to) const;
+
+    const Node* getNode(long long id) const;
 };
 
 #endif
