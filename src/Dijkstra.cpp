@@ -39,9 +39,11 @@ Route Dijkstra::shortestPath(
         pq.pop();
         double currentDistance = current.first;
         long long currentNode = current.second;
-        if(currentDistance > dist[currentNode])
-        {
+        if(currentDistance > dist[currentNode]){
             continue;
+        }
+        if(currentNode == destination){
+            break;
         }
         auto it = adjList.find(currentNode);
         if(it == adjList.end())
@@ -93,15 +95,14 @@ Route Dijkstra::shortestPath(
         path.end()
     );
     route.path = path;
-    if(mode == DISTANCE)
-    {
-        route.totalDistance =
-            dist[destination];
-    }
-    else
-    {
-        route.totalTravelTime =
-            dist[destination];
+    route.totalDistance = 0.0;
+    route.totalTravelTime = 0.0;
+    for(int i = 0; i < path.size() - 1; i++){
+        const Edge* edge =graph.getEdge(path[i],path[i + 1]);
+        if(edge != nullptr){
+            route.totalDistance += edge->distance;
+            route.totalTravelTime += edge->travelTime;
+        }
     }
     return route;
 }

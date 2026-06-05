@@ -19,3 +19,19 @@ const std::unordered_map<long long, std::vector<Edge>>& Graph::getAdjList() cons
 {
     return adj;
 }
+const Edge* Graph::getEdge(long long from,long long to) const
+{
+    auto it = adj.find(from);
+    if(it == adj.end())
+    {
+        return nullptr;
+    }
+    for(const Edge& edge : it->second)
+    {
+        if(edge.to == to)
+        {
+            return &edge;
+        }
+    }
+    return nullptr;
+}

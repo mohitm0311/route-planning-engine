@@ -20,6 +20,8 @@ public:
     const std::unordered_map<long long, Node>& getNodes() const;
 
     const std::unordered_map<long long, std::vector<Edge>>& getAdjList() const;
+
+    const Edge* getEdge(long long from,long long to) const;
 };
 
 #endif
