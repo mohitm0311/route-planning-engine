@@ -16,6 +16,9 @@
 
         <nd ref="2"/>
 
+        <tag k="highway"
+             v="residential"/>
+
     </way>
 
 </osm>

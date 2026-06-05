@@ -1,4 +1,3 @@
-#include <vector>
 #include "../include/OSMParser.h"
 
 #include "../external/tinyxml2/tinyxml2.h"
@@ -6,6 +5,8 @@
 #include "../include/Utils.h"
 
 #include <iostream>
+#include <vector>
+#include <string>
 
 using namespace tinyxml2;
 
@@ -56,73 +57,112 @@ bool OSMParser::parse(
 
         nodeCount++;
     }
+
     long long edgeCount = 0;
 
-for(
-    XMLElement* wayElement =
-        root->FirstChildElement("way");
-    wayElement != nullptr;
-    wayElement =
-        wayElement->NextSiblingElement("way")
-)
-{
-    std::vector<long long> wayNodes;
-
     for(
-        XMLElement* ndElement =
-            wayElement->FirstChildElement("nd");
-        ndElement != nullptr;
-        ndElement =
-            ndElement->NextSiblingElement("nd")
+        XMLElement* wayElement =
+            root->FirstChildElement("way");
+        wayElement != nullptr;
+        wayElement =
+            wayElement->NextSiblingElement("way")
     )
     {
-        long long nodeId =
-            ndElement->Int64Attribute("ref");
+        bool isRoad = false;
 
-        wayNodes.push_back(nodeId);
-    }
+        for(
+            XMLElement* tagElement =
+                wayElement->FirstChildElement("tag");
+            tagElement != nullptr;
+            tagElement =
+                tagElement->NextSiblingElement("tag")
+        )
+        {
+            const char* key =
+                tagElement->Attribute("k");
 
-    for(size_t i = 0;
-        i + 1 < wayNodes.size();
-        i++)
-    {
-        const Node* from =
-            graph.getNode(wayNodes[i]);
+            if(
+                key != nullptr &&
+                std::string(key) == "highway"
+            )
+            {
+                isRoad = true;
+                break;
+            }
+        }
 
-        const Node* to =
-            graph.getNode(wayNodes[i + 1]);
-
-        if(from == nullptr ||
-           to == nullptr)
+        if(!isRoad)
         {
             continue;
         }
 
-        double distance =
-            haversineDistance(
-                from->latitude,
-                from->longitude,
-                to->latitude,
-                to->longitude
+        std::vector<long long> wayNodes;
+
+        for(
+            XMLElement* ndElement =
+                wayElement->FirstChildElement("nd");
+            ndElement != nullptr;
+            ndElement =
+                ndElement->NextSiblingElement("nd")
+        )
+        {
+            long long nodeId =
+                ndElement->Int64Attribute("ref");
+
+            wayNodes.push_back(nodeId);
+        }
+
+        for(
+            size_t i = 0;
+            i + 1 < wayNodes.size();
+            i++
+        )
+        {
+            const Node* from =
+                graph.getNode(
+                    wayNodes[i]
+                );
+
+            const Node* to =
+                graph.getNode(
+                    wayNodes[i + 1]
+                );
+
+            if(
+                from == nullptr ||
+                to == nullptr
+            )
+            {
+                continue;
+            }
+
+            double distance =
+                haversineDistance(
+                    from->latitude,
+                    from->longitude,
+                    to->latitude,
+                    to->longitude
+                );
+
+            double travelTime =
+                distance / 40.0;
+
+            graph.addEdge(
+                wayNodes[i],
+                wayNodes[i + 1],
+                distance,
+                travelTime
             );
 
-        double travelTime =
-            distance / 40.0;
-
-        graph.addEdge(
-            wayNodes[i],
-            wayNodes[i + 1],
-            distance,
-            travelTime
-        );
-
-        edgeCount++;
+            edgeCount++;
+        }
     }
-}
+
     std::cout
         << "Nodes Loaded: "
         << nodeCount
-        << "\n";    
+        << "\n";
+
     std::cout
         << "Edges Loaded: "
         << edgeCount
