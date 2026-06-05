@@ -148,13 +148,20 @@ bool OSMParser::parse(
                 distance / 40.0;
 
             graph.addEdge(
-                wayNodes[i],
-                wayNodes[i + 1],
-                distance,
-                travelTime
+            wayNodes[i],
+            wayNodes[i + 1],
+            distance,
+            travelTime
             );
 
-            edgeCount++;
+            graph.addEdge(
+            wayNodes[i + 1],
+            wayNodes[i],
+            distance,
+            travelTime
+            );
+
+            edgeCount+=2;
         }
     }
 
